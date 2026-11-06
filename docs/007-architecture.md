@@ -372,6 +372,8 @@ Some generic modules still refer directly to GitHub or Feishu:
 | `src/sources/feishu-loops.ts` | The Feishu loops: the event consumer, history recovery, chat names and polling of subscribed topics |
 | `src/sources/feishu-channel.ts` | The Feishu Channel: topic replies, `sent` or `gone` |
 | `src/sources/feishu-read.ts` | The `feishu/` reads of a Trigger's message, its root, parent and topic, and `feishuThreadContext`, which gives them to assessments with their images |
+| `src/sources/bridge.ts` | The memory-bridge kind and plugin entry, exported as `./bridge-watch`: dispatch cards on the Acheron bridge become Triggers |
+| `src/sources/bridge-read.ts` | Reads dispatch cards from the bridge database, and the card a Trigger was built from |
 | `src/sources/admission-context.ts` | The bounded window an assessment starts from: the first pages of a Trigger's Thread, read through its kind, and the messages around the Trigger |
 | `src/sources/feishu-image.ts` | Reads a Feishu message's image as an attachment for the assessing Session |
 | `src/client/index.tsx` | The client plugin entry: the sidebar entry, the main panel and the page in DeepSeek Harness's Plugin Manager |
@@ -399,6 +401,8 @@ Some generic modules still refer directly to GitHub or Feishu:
 
 `src/sources/github.ts` and `src/sources/feishu.ts` are also the entries of the two Source plugins, built by `tsdown.config.ts` and exported in `package.json` as `./github-watch` and `./feishu-watch`. The bundle's `cordis.patch.yml` inserts the three plugins, with Feishu disabled.
 
+`src/sources/bridge.ts` is the entry of the third Source plugin, exported as `./bridge-watch`. It reads dispatch cards from the Acheron memory bridge: a card is a `contexts` row whose tags carry the dispatch tag. Its author is the `agent:` tag and its recipient the `to:` tag; the Source's `agent` setting picks the recipient, so only the cards addressed to this agent are its work. A card is written by an agent rather than a person, so it is a bot message and reaches a Ticket only as an inferred candidate, through the Source's `bots` list and an enabled Policy rule.
+
 ## Tests
 
 | Test | Covers |
@@ -408,6 +412,7 @@ Some generic modules still refer directly to GitHub or Feishu:
 | `tests/policy.spec.ts` | Source scope, the gate, the admission table, Mandate revalidation, the Policy version, settings migrations and assessment outcomes |
 | `tests/registry.spec.ts` | `SourceRegistry`: instances, validation, Policy parts, Channels and Thread context |
 | `tests/sources.spec.ts` | The Feishu and GitHub Sources on a `SourceContext`: translation, polls and read positions, the pull request rules, health |
+| `tests/bridge.spec.ts` | The memory-bridge Source: dispatch cards become Triggers, only for the agent they name, and each card once |
 | `tests/commands.spec.ts` | CLI calls as the deployment's accounts, the Channels' answers, and repository-scoped GitHub calls |
 | `tests/feishu-read.spec.ts`, `tests/github-read.spec.ts` | Feishu and GitHub reads |
 | `tests/admission-context.spec.ts`, `tests/feishu-image.spec.ts` | The Thread window of assessments, and Feishu image reads |
